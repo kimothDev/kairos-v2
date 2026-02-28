@@ -17,11 +17,15 @@ jest.mock("expo-notifications", () => ({
 }));
 
 // Mock AsyncStorage
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(() => Promise.resolve(null)),
-  setItem: jest.fn(() => Promise.resolve()),
-  removeItem: jest.fn(() => Promise.resolve()),
-}));
+jest.mock("@react-native-async-storage/async-storage", () => {
+  const mock = {
+    getItem: jest.fn(() => Promise.resolve(null)),
+    setItem: jest.fn(() => Promise.resolve()),
+    removeItem: jest.fn(() => Promise.resolve()),
+    clear: jest.fn(() => Promise.resolve()),
+  };
+  return { __esModule: true, default: mock, ...mock };
+});
 
 // Mock expo-sqlite (ES module that Jest can't parse without transformation)
 jest.mock("expo-sqlite", () => ({

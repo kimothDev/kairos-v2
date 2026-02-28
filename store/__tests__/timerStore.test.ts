@@ -20,11 +20,15 @@ jest.mock("expo-notifications", () => ({
   cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),
 }));
 
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(() => Promise.resolve(null)),
-  setItem: jest.fn(() => Promise.resolve()),
-  removeItem: jest.fn(() => Promise.resolve()),
-}));
+jest.mock("@react-native-async-storage/async-storage", () => {
+  const mock = {
+    getItem: jest.fn(() => Promise.resolve(null)),
+    setItem: jest.fn(() => Promise.resolve()),
+    removeItem: jest.fn(() => Promise.resolve()),
+    clear: jest.fn(() => Promise.resolve()),
+  };
+  return { __esModule: true, default: mock, ...mock };
+});
 
 jest.mock("@/services/sessionService", () => ({
   loadSessionsFromDB: jest.fn(() => Promise.resolve([])),

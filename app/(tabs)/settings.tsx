@@ -428,7 +428,7 @@ export default function SettingsScreen() {
             <Text
               style={[styles.settingValue, { color: colors.text.secondary }]}
             >
-              2.0.0
+              1.0.0
             </Text>
           </View>
         </View>

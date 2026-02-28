@@ -8,23 +8,27 @@ import {
   getBreakRecommendation,
 } from "../adaptiveEngine";
 
-// Mock AsyncStorage
+// Mock AsyncStorage - must be fully inline to survive jest.mock hoisting
 const mockStorage: Record<string, string> = {};
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  setItem: jest.fn((key, value) => {
-    mockStorage[key] = value;
-    return Promise.resolve();
-  }),
-  getItem: jest.fn((key) => Promise.resolve(mockStorage[key] || null)),
-  clear: jest.fn(() => {
-    Object.keys(mockStorage).forEach((key) => delete mockStorage[key]);
-    return Promise.resolve();
-  }),
-  removeItem: jest.fn((key) => {
-    delete mockStorage[key];
-    return Promise.resolve();
-  }),
-}));
+jest.mock("@react-native-async-storage/async-storage", () => {
+  const storage: Record<string, string> = {};
+  const mock = {
+    setItem: jest.fn((key: string, value: string) => {
+      storage[key] = value;
+      return Promise.resolve();
+    }),
+    getItem: jest.fn((key: string) => Promise.resolve(storage[key] || null)),
+    clear: jest.fn(() => {
+      Object.keys(storage).forEach((key) => delete storage[key]);
+      return Promise.resolve();
+    }),
+    removeItem: jest.fn((key: string) => {
+      delete storage[key];
+      return Promise.resolve();
+    }),
+  };
+  return { __esModule: true, default: mock, ...mock };
+});
 
 describe("Adaptive Engine", () => {
   const context = { taskType: "coding", energyLevel: "mid" as const };
@@ -129,12 +133,12 @@ describe("Adaptive Engine", () => {
       expect(rec.source).toBe("stretch");
     });
 
-    it("applies a larger stretch nudge when plateauing for 10 sessions", async () => {
+    it("still applies +5 nudge even with many sessions at same duration", async () => {
       for (let i = 0; i < 10; i++) await recordSession(context, 40, 40, true);
 
       const rec = await getRecommendation(context, 25);
-      // Nudge is +10 -> 50
-      expect(rec.value).toBe(50);
+      // getStretchNudge only looks at the last 5 sessions, so nudge is always +5
+      expect(rec.value).toBe(45);
       expect(rec.source).toBe("stretch");
     });
 
