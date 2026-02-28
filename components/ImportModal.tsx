@@ -30,7 +30,7 @@ export default function ImportModal({
   const colors = useThemeColor();
   const [selection, setSelection] = useState<ImportSelection>({
     sessions: true,
-    rlModel: true,
+    adaptiveState: true,
     settings: false,
   });
 
@@ -39,7 +39,7 @@ export default function ImportModal({
     if (visible && data) {
       setSelection({
         sessions: data.counts.sessions > 0,
-        rlModel: data.counts.hasRLModel,
+        adaptiveState: data.counts.hasAdaptiveState,
         settings: false, // Default to false for settings to avoid accidental overrides
       });
     }
@@ -110,33 +110,33 @@ export default function ImportModal({
               />
             </TouchableOpacity>
 
-            {/* RL Model Option */}
+            {/* Adaptive State Option */}
             <TouchableOpacity
               style={[
                 styles.optionRow,
-                !data.counts.hasRLModel && styles.disabledOption,
+                !data.counts.hasAdaptiveState && styles.disabledOption,
               ]}
               onPress={() =>
-                data.counts.hasRLModel && toggleSelection("rlModel")
+                data.counts.hasAdaptiveState && toggleSelection("adaptiveState")
               }
-              disabled={!data.counts.hasRLModel}
+              disabled={!data.counts.hasAdaptiveState}
             >
               <View style={styles.optionInfo}>
                 <Text
                   style={[styles.optionLabel, { color: colors.text.primary }]}
                 >
-                  AI Learning Data
+                  Adaptive Engine Data
                 </Text>
                 <Text
                   style={[styles.optionDetail, { color: colors.text.light }]}
                 >
-                  {data.counts.hasRLModel ? "Available" : "Not found in backup"}
+                  {data.counts.hasAdaptiveState ? "Available" : "Not found in backup"}
                 </Text>
               </View>
               <Switch
-                value={selection.rlModel}
-                onValueChange={() => toggleSelection("rlModel")}
-                disabled={!data.counts.hasRLModel}
+                value={selection.adaptiveState}
+                onValueChange={() => toggleSelection("adaptiveState")}
+                disabled={!data.counts.hasAdaptiveState}
                 trackColor={{ false: colors.inactive, true: colors.primary }}
                 thumbColor={colors.card}
               />
@@ -220,16 +220,16 @@ export default function ImportModal({
                   shadowColor: colors.primary,
                 },
                 !selection.sessions &&
-                  !selection.rlModel &&
+                  !selection.adaptiveState &&
                   !selection.settings &&
                   styles.disabledButton,
                 !selection.sessions &&
-                  !selection.rlModel &&
+                  !selection.adaptiveState &&
                   !selection.settings && { backgroundColor: colors.inactive },
               ]}
               onPress={handleImport}
               disabled={
-                !selection.sessions && !selection.rlModel && !selection.settings
+                !selection.sessions && !selection.adaptiveState && !selection.settings
               }
             >
               <Text style={styles.importButtonText}>Import Selected</Text>

@@ -1,7 +1,7 @@
 /**
  * Performance Screen
  *
- * Provides detailed analytics and AI-driven insights into focus habits,
+ * Provides detailed analytics and objective insights into focus habits,
  * including trends, metrics comparison, and optimal focus duration discovery.
  */
 import AdaptiveBarChart from "@/components/AdaptiveBarChart";
@@ -157,7 +157,7 @@ export default function PerformanceScreen() {
     };
   }, [sessions, timeRange, offset]);
 
-  // 3. AI Insights
+  // 3. Smart Insights
   const insights = useMemo(() => {
     return generateInsights(sessions);
   }, [sessions]);
