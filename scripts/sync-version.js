@@ -71,6 +71,23 @@ if (fs.existsSync(releaseNotesPath)) {
   console.log(`✅ Updated RELEASE_NOTES.md`);
 }
 
+// Update version in Settings screen
+const settingsPath = path.join(projectRoot, "app", "(tabs)", "settings.tsx");
+if (fs.existsSync(settingsPath)) {
+  let settings = fs.readFileSync(settingsPath, "utf8");
+  // Find the last occurrence of "Version" (the one in the About section)
+  // and replace the next semver string after it
+  const versionLabelIdx = settings.lastIndexOf("Version");
+  if (versionLabelIdx !== -1) {
+    const before = settings.substring(0, versionLabelIdx);
+    const after = settings.substring(versionLabelIdx);
+    const updated = after.replace(/\d+\.\d+\.\d+/, version);
+    settings = before + updated;
+  }
+  fs.writeFileSync(settingsPath, settings);
+  console.log(`✅ Updated app/(tabs)/settings.tsx`);
+}
+
 console.log(`\n🎉 Version sync complete!\n`);
 console.log(`Next steps:`);
 console.log(`  1. Review changes: git diff`);
