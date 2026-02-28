@@ -149,7 +149,7 @@ export function getDailyFatigueMultiplier(todayTotalMinutes: number): number {
 export function getConsecutiveSessionPenalty(lastSessionEndTime: number, recommendedBreak: number): number {
   if (!lastSessionEndTime) return 1.0;
   
-  const minutesSinceLast = (Date.now() - lastSessionEndTime) / 60000;
+  const minutesSinceLast = Math.max(0, (Date.now() - lastSessionEndTime) / 60000);
   if (minutesSinceLast >= recommendedBreak) return 1.0; // Rested enough
 
   // Penalty grows as the gap approaches 0
