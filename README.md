@@ -2,7 +2,7 @@
 
 **Kairos is an adaptive focus coach that learns your optimal session lengths and protects you from burnout.**
 
-Instead of fixed Pomodoro-style timers (25/5), Kairos uses **Thompson Sampling** to find the _opportune moment_ for focus based on your energy levels and actual behavior.
+Instead of fixed Pomodoro-style timers (25/5), Kairos uses a **Smart Adaptive Engine** to find the _opportune moment_ for focus based on your energy levels and actual behavior history.
 
 > The goal: fewer abandoned sessions, intentional stretching of focus limits, and a system that adapts to you, not the other way around.
 
@@ -36,11 +36,11 @@ Instead of fixed Pomodoro-style timers (25/5), Kairos uses **Thompson Sampling**
 Each focus session is a coaching opportunity:
 
 1. **You tell Kairos** your current focus mood and task type
-2. **The app recommends** a focus duration based on your history (EWMA in early sessions, Thompson Sampling after 5+ sessions)
+2. **The app recommends** a focus duration based on your history (Exponentially Weighted Moving Average of completed sessions)
 3. **You complete (or skip) the session**
-4. **The model learns** and improves future recommendations
+4. **The engine learns** and improves future recommendations
 
-The system uses a hybrid **EWMA Bootstrap → Thompson Sampling** pipeline: your own average is the recommendation during early sessions, then Thompson Sampling takes over once it has enough evidence.
+The system uses a **Weighted-History Engine** with built-in **Burnout Protection**: your own historical average is the baseline, which is then scaled back if you're working too hard, taking too short breaks, or returning from a long break.
 
 ---
 
@@ -48,7 +48,7 @@ The system uses a hybrid **EWMA Bootstrap → Thompson Sampling** pipeline: your
 
 - **Pomodoro vs. Kairos**: Fixed timers assume all users focus the same way. Kairos finds the _right_ time for the _right_ duration.
 - **Capacity Shields**: The system detects burnout and prevents you from setting targets you're likely to fail.
-- **Stretch Bonus**: When you're in the "zone," the coach nudges you to expand your limits.
+- **Stretch Bonus**: When you've plateaued with high success rates, the coach gently nudges you to expand your limits.
 
 ---
 
@@ -56,16 +56,17 @@ The system uses a hybrid **EWMA Bootstrap → Thompson Sampling** pipeline: your
 
 ### Adaptive Coaching
 
-- **EWMA Bootstrap:** Mirrors your actual behavior from session 2, no random exploration
-- **Zone based learning:** Short (10-30m), Long (25-60m), and Extended (50-120m) zones
-- **Focus mood aware:** Low focus mood users aren't pushed to do longer sessions
+- **Weighted History:** Tracks your actual completed session durations to find your sweet spot
+- **Burnout Protection (Fatigue):** Recommendations scale down automatically after 2 hours of focus in one day
+- **Consecutive Cooldown:** Enforces shorter sessions if you don't take an adequate break
+- **Rest Day Ramp-up:** Eases you back in with shorter sessions if you haven't focused in a few days
 - **Break scaling:** Break duration scales with focus (max break = focus ÷ 3)
 
 ### Smart Learning
 
-- **Intent Multipliers:** Manual overrides are rewarded 1.5x more than accepted recommendations.
-- **Upward Spillover:** Successes "warm up" longer durations.
-- **Capacity tracking:** Personalized rewards for stretching your focus limits.
+- **Smooth Degradation:** If you start failing sessions, the engine smoothly lowers your target instead of punishing you instantly
+- **Adaptive Stretch Nudge:** Automatically adds +5m to your recommendation if you consistently succeed at your current level
+- **Context Aware:** Learns different baselines for different tasks and energy levels
 
 ### Offline-First
 
@@ -78,8 +79,8 @@ The system uses a hybrid **EWMA Bootstrap → Thompson Sampling** pipeline: your
 ## 🧪 What Didn't Work (and What I Learned)
 
 - Tracking time of day (too much noise) -> switched to focus mood levels.
-- Optimistic priors (random winners) -> switched to pessimistic priors.
-- Ignoring failed sessions -> added capacity tracking to stay realistic.
+- Overly complex ML (Thompson Sampling) -> switched to a deterministic, understandable adaptive engine.
+- Ignoring failed sessions -> added completion rate tracking to stay realistic.
 
 ---
 
@@ -87,8 +88,8 @@ The system uses a hybrid **EWMA Bootstrap → Thompson Sampling** pipeline: your
 
 - **Frontend:** React Native (Expo Bare Workflow)
 - **Persistence:** SQLite (offline-first)
-- **Learning:** EWMA Bootstrap + Thompson Sampling with zone-based action spaces
-- **Testing:** Jest with 80 unit tests
+- **Learning:** Adaptive Weighted-History Engine + Burnout Protection
+- **Testing:** Jest unit tests
 
 ---
 
@@ -96,8 +97,8 @@ The system uses a hybrid **EWMA Bootstrap → Thompson Sampling** pipeline: your
 
 ```bash
 # Clone the repository
-git clone https://github.com/kimothDev/kairos.git
-cd kairos
+git clone https://github.com/kimothDev/kairos-v2.git
+cd kairos-v2
 
 # Install dependencies
 bun install
