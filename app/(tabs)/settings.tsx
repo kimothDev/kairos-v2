@@ -214,7 +214,7 @@ export default function SettingsScreen() {
         data={importData}
       />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 70 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
           <Text style={[styles.title, { color: colors.text.primary }]}>
             Settings

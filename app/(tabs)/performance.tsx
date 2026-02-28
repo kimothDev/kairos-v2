@@ -195,7 +195,7 @@ export default function PerformanceScreen() {
     <View
       style={[styles.container, { backgroundColor: activeColors.background }]}
     >
-      <ScrollView contentContainerStyle={{ paddingBottom: 70 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header & Controls */}
         <View
           style={[

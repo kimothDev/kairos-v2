@@ -184,7 +184,7 @@ export default function HistoryScreen() {
             data={filteredSessions}
             keyExtractor={(item) => String(item.id)}
             renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: 70 }}
+            contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
