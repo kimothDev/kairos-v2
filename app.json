@@ -3,7 +3,7 @@
     "name": "Kairos",
     "slug": "kairos",
     "owner": "kimoth",
-    "version": "1.5.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
     "scheme": "myapp",
@@ -20,7 +20,7 @@
     },
     "android": {
       "package": "app.kairos",
-      "versionCode": 7,
+      "versionCode": 8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/appIcon.png",
         "backgroundColor": "#121212"
@@ -61,7 +61,8 @@
             }
           }
         }
-      ]
+      ],
+      "./plugins/withAbiSplits"
     ],
     "experiments": {
       "typedRoutes": true
