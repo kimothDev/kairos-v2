@@ -21,7 +21,6 @@ import {
   Bell,
   Brain,
   Download,
-  Github,
   Info,
   Monitor,
   Moon,
@@ -410,21 +409,7 @@ export default function SettingsScreen() {
             </Text>
           </View>
 
-          <TouchableOpacity
-            style={[styles.settingItem, { borderBottomColor: colors.border }]}
-            onPress={() =>
-              Linking.openURL("https://github.com/kimothDev/kairos")
-            }
-          >
-            <View style={styles.settingInfo}>
-              <Github size={20} color={colors.text.primary} />
-              <Text
-                style={[styles.settingText, { color: colors.text.primary }]}
-              >
-                View on GitHub
-              </Text>
-            </View>
-          </TouchableOpacity>
+
 
           <View
             style={[
@@ -443,7 +428,7 @@ export default function SettingsScreen() {
             <Text
               style={[styles.settingValue, { color: colors.text.secondary }]}
             >
-              1.5.0
+              2.0.0
             </Text>
           </View>
         </View>
