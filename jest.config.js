@@ -1,6 +1,6 @@
 /** @type {import('jest').Config} */
 const config = {
-  preset: "ts-jest",
+  preset: "jest-expo",
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   testMatch: ["**/__tests__/**/*.test.ts"],
@@ -8,20 +8,9 @@ const config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  transform: {
-    "^.+\\.tsx?$": [
-      "ts-jest",
-      {
-        tsconfig: {
-          module: "commonjs",
-          esModuleInterop: true,
-          allowSyntheticDefaultImports: true,
-          strict: true,
-          skipLibCheck: true,
-        },
-      },
-    ],
-  },
+  transformIgnorePatterns: [
+    "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)",
+  ],
   collectCoverageFrom: [
     "services/**/*.ts",
     "utils/**/*.ts",
@@ -31,3 +20,4 @@ const config = {
 };
 
 module.exports = config;
+
