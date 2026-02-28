@@ -9,7 +9,7 @@ import {
     TIME_ADJUSTMENT_STEP,
     TIMER_CONSTANTS,
 } from "@/constants/timer";
-import { getSmartBreakRecommendation } from "@/services/rl";
+import { getBreakRecommendation } from "@/services/adaptiveEngine";
 import {
     completeSession,
     CompletionType,
@@ -122,14 +122,10 @@ export const createTimerSlice: SliceCreator<TimerSlice> = (set, get) => ({
       // Re-calculate smart break based on ACTUAL selected time
       // This ensures that if the user customized focus (e.g. 10m),
       // the break recommendation respects the scaled options.
-      const breakRec = await getSmartBreakRecommendation(
-        { taskType: taskType!, energyLevel: energyLevel! },
-        state.recommendedBreakDuration,
-        Math.round(time / 60),
-      );
+      const breakRec = getBreakRecommendation(Math.round(time / 60));
       set({
         originalFocusDuration: time,
-        recommendedBreakDuration: breakRec.value,
+        recommendedBreakDuration: breakRec,
       });
     }
 

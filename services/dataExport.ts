@@ -10,7 +10,7 @@ import {
     getAllSessions,
     insertSession,
 } from "@/services/database";
-import { exportRLState, importRLState } from "@/services/rl";
+import { exportAdaptiveState, importAdaptiveState } from "@/services/adaptiveEngine";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
@@ -23,18 +23,18 @@ const SETTINGS_STORAGE_KEY = "timer-storage";
 
 export interface ParsedImportData {
   sessions: DBSession[];
-  rlModel: any;
+  adaptiveState: any;
   settings: any;
   counts: {
     sessions: number;
-    hasRLModel: boolean;
+    hasAdaptiveState: boolean;
     hasSettings: boolean;
   };
 }
 
 export type ImportSelection = {
   sessions: boolean;
-  rlModel: boolean;
+  adaptiveState: boolean;
   settings: boolean;
 };
 
@@ -49,9 +49,9 @@ export const exportAllDataAsZip = async (): Promise<void> => {
     const sessions = await getAllSessions();
     zip.file("sessions.json", JSON.stringify(sessions));
 
-    // 2. Export RL Model
-    const rlState = await exportRLState();
-    zip.file("rl_model.json", JSON.stringify(rlState));
+    // 2. Export Adaptive Engine State
+    const engineState = await exportAdaptiveState();
+    zip.file("adaptive_engine_state.json", JSON.stringify(engineState));
 
     // 3. Export Settings
     const settingsJson = await AsyncStorage.getItem(SETTINGS_STORAGE_KEY);
@@ -125,9 +125,9 @@ export const pickAndParseZip = async (): Promise<ParsedImportData | null> => {
 
     const data: ParsedImportData = {
       sessions: [],
-      rlModel: null,
+      adaptiveState: null,
       settings: null,
-      counts: { sessions: 0, hasRLModel: false, hasSettings: false },
+      counts: { sessions: 0, hasAdaptiveState: false, hasSettings: false },
     };
 
     // Parse Sessions
@@ -138,12 +138,12 @@ export const pickAndParseZip = async (): Promise<ParsedImportData | null> => {
       data.counts.sessions = data.sessions.length;
     }
 
-    // Parse RL Model
-    const rlFile = zip.file("rl_model.json");
-    if (rlFile) {
-      const content = await rlFile.async("string");
-      data.rlModel = JSON.parse(content);
-      data.counts.hasRLModel = true;
+    // Parse Adaptive State
+    const adaptiveFile = zip.file("adaptive_engine_state.json");
+    if (adaptiveFile) {
+      const content = await adaptiveFile.async("string");
+      data.adaptiveState = JSON.parse(content);
+      data.counts.hasAdaptiveState = true;
     }
 
     // Parse Settings
@@ -187,9 +187,9 @@ export const performImport = async (
       }
     }
 
-    // 2. Import RL Model
-    if (selection.rlModel && data.rlModel) {
-      await importRLState(data.rlModel);
+    // 2. Import Adaptive State
+    if (selection.adaptiveState && data.adaptiveState) {
+      await importAdaptiveState(data.adaptiveState);
     }
 
     // 3. Import Settings

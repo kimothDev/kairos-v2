@@ -5,8 +5,7 @@
  * notification scheduling, session object factory, and reward calculation integration.
  */
 import { insertSession } from "@/services/database";
-import { calculateReward } from "@/services/recommendations";
-import { Context, debugModel, loadModel, updateModel } from "@/services/rl";
+import { Context } from "@/services/adaptiveEngine";
 import { getSessionRecommendation } from "@/services/sessionPlanner";
 import { EnergyLevel } from "@/types";
 import { createContextKey } from "@/utils/contextKey";
@@ -134,73 +133,10 @@ export function createSession(params: {
   return {
     ...params,
     timeOfDay: detectTimeOfDay(), // Still stored for historical data
-    reward: calculateReward(
-      params.sessionCompleted,
-      params.acceptedRecommendation,
-      params.focusedUntilSkipped,
-      params.userSelectedDuration,
-      params.recommendedDuration,
-      params.skipReason,
-    ),
+    reward: 0, // Legacy DB column
     date: new Date().toISOString().split("T")[0],
     createdAt: new Date().toISOString(),
   };
-}
-
-/**
- * Create a session and update the RL model.
- */
-export async function createSessionWithContext(
-  context: Context,
-  sessionData: {
-    taskType: string;
-    energyLevel: EnergyLevel;
-    recommendedDuration: number;
-    recommendedBreak: number;
-    userSelectedDuration: number;
-    userSelectedBreak: number;
-    acceptedRecommendation: boolean;
-    sessionCompleted: boolean;
-    focusedUntilSkipped: number;
-    skipReason?: "skippedFocus" | "skippedBreak";
-  },
-  store: any,
-  modelActionOverride?: number,
-) {
-  const newSession = createSession(sessionData);
-  await insertSession(newSession);
-  await updateModel(
-    context,
-    modelActionOverride ?? (sessionData.focusedUntilSkipped || 0),
-    newSession.reward,
-  );
-  await store.loadSessions();
-
-  // Debug logging
-  const model = await loadModel();
-  const contextKey = createContextKey(context);
-  const actions = Object.keys(model[contextKey] || {})
-    .map(Number)
-    .sort((a, b) => a - b);
-
-  console.log(`\n=== Session Model Update ===`);
-  console.log(`Context: ${contextKey}`);
-  console.log("Action | Alpha | Beta | Mean | Observations");
-  console.log("------------------------------------------");
-  actions.forEach((action) => {
-    const params = model[contextKey][action];
-    if (!params) return;
-    const { alpha, beta } = params;
-    const mean = alpha / (alpha + beta);
-    const observations = alpha + beta - 1.5 - 1.0;
-    console.log(
-      `${action.toString().padStart(5)} | ${alpha.toFixed(3).padStart(5)} | ${beta.toFixed(3).padStart(5)} | ${mean.toFixed(3).padStart(5)} | ${observations.toFixed(1)}`,
-    );
-  });
-  console.log("");
-
-  await debugModel();
-  return newSession;
 }
 
 /**
