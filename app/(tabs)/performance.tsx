@@ -195,54 +195,52 @@ export default function PerformanceScreen() {
     <View
       style={[styles.container, { backgroundColor: activeColors.background }]}
     >
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Header & Controls */}
+      {/* Header & Controls (Sticky) */}
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: activeColors.background,
+            paddingTop: insets.top + 20,
+          },
+        ]}
+      >
+        <Text style={[styles.title, { color: activeColors.text.primary }]}>
+          Overview
+        </Text>
+
+        {/* Time Range Selector */}
         <View
           style={[
-            styles.header,
-            {
-              backgroundColor: activeColors.background,
-              paddingTop: insets.top + 20,
-            },
+            styles.timeRangeSelector,
+            { backgroundColor: activeColors.card },
           ]}
         >
-          <Text style={[styles.title, { color: activeColors.text.primary }]}>
-            Overview
-          </Text>
-
-          {/* Time Range Selector */}
-          <View
-            style={[
-              styles.timeRangeSelector,
-              { backgroundColor: activeColors.card },
-            ]}
-          >
-            {TimeRanges.map((range) => (
-              <TouchableOpacity
-                key={range}
+          {TimeRanges.map((range) => (
+            <TouchableOpacity
+              key={range}
+              style={[
+                styles.timeRangeButton,
+                timeRange === range && {
+                  backgroundColor: activeColors.primary,
+                },
+              ]}
+              onPress={() => handleRangeChange(range)}
+            >
+              <Text
                 style={[
-                  styles.timeRangeButton,
+                  styles.timeRangeText,
+                  { color: activeColors.text.secondary },
                   timeRange === range && {
-                    backgroundColor: activeColors.primary,
+                    color: activeColors.card,
+                    fontFamily: "Outfit_700Bold",
                   },
                 ]}
-                onPress={() => handleRangeChange(range)}
               >
-                <Text
-                  style={[
-                    styles.timeRangeText,
-                    { color: activeColors.text.secondary },
-                    timeRange === range && {
-                      color: activeColors.card,
-                      fontFamily: "Outfit_700Bold",
-                    },
-                  ]}
-                >
-                  {range.charAt(0).toUpperCase() + range.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                {range.charAt(0).toUpperCase() + range.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Date Navigation */}
@@ -268,7 +266,9 @@ export default function PerformanceScreen() {
             />
           </TouchableOpacity>
         </View>
+      </View>
 
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* --- Main Chart --- */}
         <View style={{ marginHorizontal: 16 }}>
           <AdaptiveBarChart data={chartData} />
