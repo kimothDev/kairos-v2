@@ -186,10 +186,7 @@ export default function HistoryScreen() {
             renderItem={renderItem}
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={5}
-            removeClippedSubviews={true}
+            windowSize={Number.MAX_SAFE_INTEGER}
           />
         ) : (
           <View
