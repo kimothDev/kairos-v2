@@ -217,6 +217,9 @@ export async function getRecommendation(
   if (hasEnoughHistory && stats.ewma > 0) {
     baseValue = stats.ewma;
     source = "learned";
+    console.log(`[AdaptiveEngine] Baseline: Learned EWMA (${baseValue.toFixed(1)}m)`);
+  } else {
+    console.log(`[AdaptiveEngine] Baseline: Heuristic (${baseValue.toFixed(1)}m) - Not enough history or no EWMA`);
   }
 
   // 2. STRETCH NUDGE
@@ -236,18 +239,22 @@ export async function getRecommendation(
 
   const aggregateMultiplier = fatigueMult * cooldownMult * restMult;
   
+  console.log(`[AdaptiveEngine] Multipliers -> Fatigue: ${fatigueMult.toFixed(2)}x, Cooldown: ${cooldownMult.toFixed(2)}x, Rest: ${restMult.toFixed(2)}x`);
+
   if (aggregateMultiplier < 1.0) {
     const original = baseValue;
     baseValue *= aggregateMultiplier;
     source = "fatigue-adjusted";
-    console.log(`[AdaptiveEngine] Protection triggered: ${original.toFixed(1)}m * ${(aggregateMultiplier).toFixed(2)}x = ${baseValue.toFixed(1)}m`);
+    console.log(`[AdaptiveEngine] Protection triggered: ${original.toFixed(1)}m * ${(aggregateMultiplier).toFixed(2)}x (aggregate) = ${baseValue.toFixed(1)}m`);
   }
 
   // 4. CLAMP AND ROUND
   // Cap between 5m and 120m, round to 5s. If ADHD mode, cap at 30m.
   let finalValue = roundToNearest5(baseValue);
-  finalValue = Math.max(5, Math.min(includeShortSessions ? 30 : 120, finalValue));
+  const maxCap = includeShortSessions ? 30 : 120;
+  finalValue = Math.max(5, Math.min(maxCap, finalValue));
 
+  console.log(`[AdaptiveEngine] Rounding & Clamping -> Rounded: ${roundToNearest5(baseValue)}m, ADHD Mode: ${includeShortSessions}, Cap: ${maxCap}m`);
   console.log(`Result: ${finalValue}m (${source})\n`);
   return { value: finalValue, source };
 }
