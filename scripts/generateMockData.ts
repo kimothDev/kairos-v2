@@ -91,12 +91,39 @@ const generateMockupSessions = (): DBSession[] => {
 };
 
 const generateMockupAdaptiveState = () => {
+  const now = Date.now();
   return {
-    contexts: {
-      "Coding|high": { learnedDuration: 52.4, completedObs: 18, failedObs: 4, actualFocusTime: 48.2 },
-      "Coding|mid": { learnedDuration: 34.1, completedObs: 10, failedObs: 1, actualFocusTime: 33.5 },
-      "Writing|mid": { learnedDuration: 38.1, completedObs: 12, failedObs: 5, actualFocusTime: 32.5 },
-      "Research|low": { learnedDuration: 22.0, completedObs: 15, failedObs: 1, actualFocusTime: 21.5 }
+    "Coding|high": { 
+      ewma: 52.4, 
+      completionRate: 0.8,
+      history: [
+        { duration: 55, actualFocusTime: 55, completed: true, timestamp: now - 86400000 },
+        { duration: 55, actualFocusTime: 55, completed: true, timestamp: now }
+      ]
+    },
+    "Coding|mid": { 
+      ewma: 34.1, 
+      completionRate: 0.85,
+      history: [
+        { duration: 35, actualFocusTime: 35, completed: true, timestamp: now - 86400000 },
+        { duration: 35, actualFocusTime: 35, completed: true, timestamp: now }
+      ]
+    },
+    "Writing|mid": { 
+      ewma: 38.1, 
+      completionRate: 0.7,
+      history: [
+        { duration: 40, actualFocusTime: 40, completed: true, timestamp: now - 86400000 },
+        { duration: 40, actualFocusTime: 40, completed: true, timestamp: now }
+      ]
+    },
+    "Research|low": { 
+      ewma: 22.0, 
+      completionRate: 0.95,
+      history: [
+        { duration: 20, actualFocusTime: 20, completed: true, timestamp: now - 86400000 },
+        { duration: 20, actualFocusTime: 20, completed: true, timestamp: now }
+      ]
     }
   };
 };
